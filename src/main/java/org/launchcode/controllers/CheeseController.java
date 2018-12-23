@@ -24,10 +24,10 @@ import java.util.List;
 public class CheeseController {
 
     @Autowired
-    private CheeseDao cheeseDao;
+    CheeseDao cheeseDao;
 
     @Autowired
-    private CategoryDao categoryDao;
+    CategoryDao categoryDao;
 
     // Request path: /cheese
     @RequestMapping(value = "")
@@ -35,6 +35,7 @@ public class CheeseController {
 
         model.addAttribute("cheeses", cheeseDao.findAll());
         model.addAttribute("title", "My Cheeses");
+
 
         return "cheese/index";
     }
@@ -49,7 +50,7 @@ public class CheeseController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String processAddCheeseForm(@ModelAttribute  @Valid Cheese newCheese,
-                                       Errors errors,@RequestParam int categoryId, Model model) {
+                                       Errors errors, @RequestParam int categoryId, Model model) {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
@@ -71,29 +72,23 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "remove", method = RequestMethod.POST)
-    public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
+    public String processRemoveCheeseForm(@RequestParam int[] ids) {
 
-        for (int cheeseId : cheeseIds) {
-            cheeseDao.delete(cheeseId);
+        for (int id : ids) {
+            cheeseDao.delete(id);
         }
 
         return "redirect:";
     }
 
-    //Category controller
-
     @RequestMapping(value = "category", method = RequestMethod.GET)
-    public String category(Model model, @RequestParam int id){
+    public String category(Model model, @RequestParam int id) {
 
         Category cat = categoryDao.findOne(id);
         List<Cheese> cheeses = cat.getCheeses();
         model.addAttribute("cheeses", cheeses);
-        model.addAttribute("title", "cheeses in Category: " + cat.getName());
-
+        model.addAttribute("title", "Cheeses in Category: " + cat.getName());
         return "cheese/index";
-
     }
-
-
 
 }
